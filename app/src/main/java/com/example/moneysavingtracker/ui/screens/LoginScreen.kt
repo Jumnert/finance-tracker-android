@@ -1,118 +1,143 @@
 package com.example.moneysavingtracker.ui.screens
 
-import android.R
-import android.R.attr.onClick
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.moneysavingtracker.ui.theme.MoneySavingTrackerTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onClick: () -> Unit = {}) {
+fun LoginScreen(
+    onLoginClick: () -> Unit = {},
+    onRegisterClick: () -> Unit = {},
+    onForgotPasswordClick: () -> Unit = {}
+) {
     var email by remember { mutableStateOf("") }
-    Scaffold { padding ->
+    var password by remember { mutableStateOf("") }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
+            // Logo/Title
             Text(
-                text = "Welcome to Money Saving Tracker",
-                style = MaterialTheme.typography.headlineMedium,
-                fontSize = 22.sp
+                text = "Finance Tracker",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
-                text = "Login to start saving",
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 12.sp
+                text = "Manage your money wisely",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Column(
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // Email
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Top
+                label = { Text("Email") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                shape = MaterialTheme.shapes.medium
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Password
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                shape = MaterialTheme.shapes.medium
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Forgot Password
+            TextButton(
+                onClick = onForgotPasswordClick,
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Forgot Password?")
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Login Button
+            Button(
+                onClick = onLoginClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    text = "Username",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontSize = 22.sp
+                    text = "Login",
+                    style = MaterialTheme.typography.titleMedium
                 )
+            }
 
-                TextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Gmail") }, // 👈 floating label
-                    placeholder = { Text("Enter your email") } // 👈 hint text
-                )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = "Password",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontSize = 22.sp
+                    text = "Don't have an account? ",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
-                TextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Gmail") }, // 👈 floating label
-                    placeholder = { Text("Enter your email") } // 👈 hint text
-                )
-                Row(modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center) {
-                    Text("Haven't create account?")
-                    Text(" Register",
-                        fontWeight = FontWeight.Medium)
+                TextButton(onClick = onRegisterClick) {
+                    Text(
+                        text = "Sign up",
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
-            Row(modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center) {
-                Button(
-                    modifier = Modifier.width(150.dp),
-                    onClick = onClick,
-
-                    shape = MaterialTheme.shapes.medium) {
-                    Text("Login")
-                }
         }
-    }}}
+    }
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
     MoneySavingTrackerTheme {
+        LoginScreen()
+    }
+}
+
+@Preview(showSystemUi = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun LoginScreenDarkPreview() {
+    MoneySavingTrackerTheme(darkTheme = true) {
         LoginScreen()
     }
 }
