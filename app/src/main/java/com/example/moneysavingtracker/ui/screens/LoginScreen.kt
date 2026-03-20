@@ -1,14 +1,19 @@
 package com.example.moneysavingtracker.ui.screens
 
+import android.R
+import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -31,7 +36,7 @@ import com.example.moneysavingtracker.ui.theme.MoneySavingTrackerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onClick: () -> Unit = {}) {
     var email by remember { mutableStateOf("") }
     Scaffold { padding ->
         Column(
@@ -39,8 +44,9 @@ fun LoginScreen() {
                 .fillMaxSize()
                 .padding(padding)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            
         ) {
 
             Text(
@@ -85,9 +91,24 @@ fun LoginScreen() {
                     label = { Text("Gmail") }, // 👈 floating label
                     placeholder = { Text("Enter your email") } // 👈 hint text
                 )
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center) {
+                    Text("Haven't create account?")
+                    Text(" Register",
+                        fontWeight = FontWeight.Medium)
+                }
             }
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center) {
+                Button(
+                    modifier = Modifier.width(150.dp),
+                    onClick = onClick,
+
+                    shape = MaterialTheme.shapes.medium) {
+                    Text("Login")
+                }
         }
-    }}
+    }}}
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
