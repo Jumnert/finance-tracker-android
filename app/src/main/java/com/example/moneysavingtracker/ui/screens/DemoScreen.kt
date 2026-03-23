@@ -1,5 +1,6 @@
 package com.example.moneysavingtracker.ui.screens
 
+import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,23 +22,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.moneysavingtracker.R
+import com.example.moneysavingtracker.ui.screens.components.TransactionButtons
 import com.example.moneysavingtracker.ui.theme.CardGradient1
 import com.example.moneysavingtracker.ui.theme.MoneySavingTrackerTheme
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DemoScreen() {
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { },
-                containerColor = MaterialTheme.colorScheme.primary,
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Icon(Icons.Default.Add, "Add")
+            Row {
+                FloatingActionButton(
+                    onClick = { onAddIncome() },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add Income")
+                }
+
             }
         }
     ) { padding ->
@@ -45,7 +52,7 @@ fun DemoScreen() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
@@ -81,7 +88,7 @@ fun DemoScreen() {
                     )
                 }
             }
-            // shadcn-style Card with gradient
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
@@ -121,7 +128,18 @@ fun DemoScreen() {
                     }
                 }
             }
-                Row(
+            // Right after your Total Balance Card
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                   ,
+                horizontalArrangement = Arrangement.spacedBy(16.dp) // spacing between buttons
+            ) {
+                TransactionButtons()
+            }
+
+
+            Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -135,7 +153,7 @@ fun DemoScreen() {
 
                     )
                     Text(
-                        text = "View",
+                        text = "View All",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -144,28 +162,131 @@ fun DemoScreen() {
 
 
           Row(modifier = Modifier.fillMaxWidth(),
-              verticalAlignment = Alignment.CenterVertically) {
-              Card( modifier = Modifier.fillMaxWidth(),
-                  shape = MaterialTheme.shapes.medium){
-                  Box(   modifier = Modifier
-                      .fillMaxWidth()
-                      .height(200.dp)
-                      .shadow(1.dp, shape = MaterialTheme.shapes.medium, clip = true)
-                      .background(color = Color.White)
-                      .padding(24.dp)){
 
+              verticalAlignment = Alignment.CenterVertically) {
+              val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+              val currentDate = formatter.format(Date())
+
+              Card(
+                  modifier = Modifier.fillMaxWidth(),
+                  shape = MaterialTheme.shapes.medium
+              ) {
+                  Column(
+                      modifier = Modifier
+                          .fillMaxWidth()
+                          .shadow(1.dp, shape = MaterialTheme.shapes.medium, clip = true)
+                          .background(Color.White)
+                          .padding(10.dp)
+                  ) {
+                      // One transaction row
+                      Row(
+                          modifier = Modifier.fillMaxWidth().padding(9.dp, 10.dp),
+                          horizontalArrangement = Arrangement.SpaceBetween,
+                          verticalAlignment = Alignment.CenterVertically
+                      ) {
+                          Text(
+                              text = currentDate,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                          Text(
+                              text = "+100$",
+                              color = MaterialTheme.colorScheme.primary,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                      }
+                      // Divider after the row
+                      HorizontalDivider(
+                          thickness = 2.dp,
+                          color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                          modifier = Modifier.padding(top = 8.dp)
+                      )
+                      Row(
+                          modifier = Modifier.fillMaxWidth().padding(1.dp, 10.dp),
+                          horizontalArrangement = Arrangement.SpaceBetween,
+                          verticalAlignment = Alignment.CenterVertically
+                      ) {
+                          Text(
+                              text = currentDate,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                          Text(
+                              text = "+100$",
+                              color = MaterialTheme.colorScheme.primary,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                      }
+                      // Divider after the row
+                      HorizontalDivider(
+                          thickness = 2.dp,
+                          color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                          modifier = Modifier.padding(top = 8.dp)
+                      )
+                      Row(
+                          modifier = Modifier.fillMaxWidth().padding(1.dp, 10.dp),
+                          horizontalArrangement = Arrangement.SpaceBetween,
+                          verticalAlignment = Alignment.CenterVertically
+                      ) {
+                          Text(
+                              text = currentDate,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                          Text(
+                              text = "+100$",
+                              color = MaterialTheme.colorScheme.primary,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                      }
+                      // Divider after the row
+                      HorizontalDivider(
+                          thickness = 2.dp,
+                          color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                          modifier = Modifier.padding(top = 8.dp)
+                      )
+                      Row(
+                          modifier = Modifier.fillMaxWidth().padding(1.dp, 10.dp),
+                          horizontalArrangement = Arrangement.SpaceBetween,
+                          verticalAlignment = Alignment.CenterVertically
+                      ) {
+                          Text(
+                              text = currentDate,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                          Text(
+                              text = "+100$",
+                              color = MaterialTheme.colorScheme.primary,
+                              style = MaterialTheme.typography.bodyLarge
+                          )
+                      }
+                      // Divider after the row
+                      HorizontalDivider(
+                          thickness = 2.dp,
+                          color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                          modifier = Modifier.padding(top = 8.dp)
+                      )
+
+
+                      // Repeat more rows here in a loop for each transaction
                   }
               }
+
 
           }
         }
     }
 }
 
+private fun RowScope.onAddExpense() {
+    TODO("Not yet implemented")
+}
+
+private fun RowScope.onAddIncome() {
+    TODO("Not yet implemented")
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DemoScreenPreview() {
     MoneySavingTrackerTheme {
-        LoginScreen()
+        DemoScreen()
     }
 }
