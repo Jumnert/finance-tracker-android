@@ -43,7 +43,7 @@ fun TransactionButtons() {
                 showDialog = true
             },
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(4.dp), // less rounded
+            shape = RoundedCornerShape(16.dp), // less rounded
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
@@ -60,7 +60,7 @@ fun TransactionButtons() {
                 showDialog = true
             },
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(4.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error
             )
