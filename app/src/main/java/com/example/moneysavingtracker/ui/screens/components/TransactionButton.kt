@@ -1,34 +1,33 @@
 package com.example.moneysavingtracker.ui.screens.components
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
-fun TransactionButtons() {
+fun TransactionButtons(
+    onAddTransaction: (title: String, amount: Double, category: String, isIncome: Boolean) -> Unit
+) {
     var showDialog by remember { mutableStateOf(false) }
-    var isAdd by remember { mutableStateOf(true) } // track which button was pressed
+    var isIncome by remember { mutableStateOf(true) }
 
     Row(
         modifier = Modifier
@@ -36,14 +35,13 @@ fun TransactionButtons() {
             .padding(top = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Add Income button
         Button(
             onClick = {
-                isAdd = true
+                isIncome = true
                 showDialog = true
             },
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(16.dp), // less rounded
+            shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
@@ -53,10 +51,9 @@ fun TransactionButtons() {
             Text(text = "Add")
         }
 
-        // Remove Expense button
         Button(
             onClick = {
-                isAdd = false
+                isIncome = false
                 showDialog = true
             },
             modifier = Modifier.weight(1f),
@@ -71,18 +68,14 @@ fun TransactionButtons() {
         }
     }
 
-    // Show dialog when either button is clicked
-    AddTransactionDialog(
-        showDialog = showDialog,
-        onDismiss = { showDialog = false },
-        onConfirm = { amount, currency, category, description ->
-            if (isAdd) {
-                // Handle Add Income
-                println("Added $amount $currency to $category: $description")
-            } else {
-                // Handle Remove Expense
-                println("Removed $amount $currency from $category: $description")
+    if (showDialog) {
+        AddTransactionDialog(
+            showDialog = showDialog,
+            isIncome = isIncome,
+            onDismiss = { showDialog = false },
+            onConfirm = { title, amount, category ->
+                onAddTransaction(title, amount, category, isIncome)
             }
-        }
-    )
+        )
+    }
 }

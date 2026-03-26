@@ -1,8 +1,10 @@
 package com.example.moneysavingtracker.data.model
 
 data class Transaction(
-    val id: Int,
+    val id: String,
+    val title: String,
     val amount: Double,
+    val date: String,
     val category: String,
-    val description: String
+    val isIncome: Boolean
 )

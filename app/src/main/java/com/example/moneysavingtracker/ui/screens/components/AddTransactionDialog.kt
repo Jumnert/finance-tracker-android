@@ -1,42 +1,44 @@
 package com.example.moneysavingtracker.ui.screens.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionDialog(
     showDialog: Boolean,
+    isIncome: Boolean,
     onDismiss: () -> Unit,
-    onConfirm: (amount: Double, currency: String, category: String, description: String) -> Unit
+    onConfirm: (title: String, amount: Double, category: String) -> Unit,
+    initialTitle: String = "",
+    initialAmount: String = "",
+    initialCategory: String = "Food"
 ) {
     if (showDialog) {
-        var amountText by remember { mutableStateOf("") }
-        var currencyIsDollar by remember { mutableStateOf(true) }
-        var category by remember { mutableStateOf("Food") }
-        var description by remember { mutableStateOf("") }
+        var title by remember { mutableStateOf(initialTitle) }
+        var amountText by remember { mutableStateOf(initialAmount) }
+        var category by remember { mutableStateOf(initialCategory) }
+        var expanded by remember { mutableStateOf(false) }
+        
+        val categories = if (isIncome) listOf("Salary", "Investment", "Gift", "Other") 
+                         else listOf("Food", "Transport", "Entertainment", "Shopping", "Other")
 
         AlertDialog(
             onDismissRequest = { onDismiss() },
             confirmButton = {
                 Button(onClick = {
                     val amount = amountText.toDoubleOrNull() ?: 0.0
-                    val currency = if (currencyIsDollar) "USD" else "KHR"
-                    onConfirm(amount, currency, category, description)
+                    onConfirm(title, amount, category)
                     onDismiss()
                 }) {
-                    Text("Add")
+                    Text("Confirm")
                 }
             },
             dismissButton = {
@@ -44,54 +46,53 @@ fun AddTransactionDialog(
                     Text("Cancel")
                 }
             },
-            title = { Text("Add Transaction") },
+            title = { Text(if (isIncome) "Income" else "Expense") },
             text = {
-                Column {
-                    // Currency switch
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Switch(
-                            checked = currencyIsDollar,
-                            onCheckedChange = { currencyIsDollar = it }
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (currencyIsDollar) "Dollar" else "Khmer Riel")
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Amount input
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        label = { Text("Title") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    
                     OutlinedTextField(
                         value = amountText,
                         onValueChange = { amountText = it },
-                        label = { Text("Amount") }
+                        label = { Text("Amount") },
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Convert to letters (simplified example)
-                    Text(
-                        text = if (amountText.isNotEmpty())
-                            "In words: ${amountText} ${if (currencyIsDollar) "USD" else "KHR"}"
-                        else "",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Category dropdown (simplified)
-                    OutlinedTextField(
-                        value = category,
-                        onValueChange = { category = it },
-                        label = { Text("Category") }
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Description
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        label = { Text("Description") }
-                    )
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedTextField(
+                            value = category,
+                            onValueChange = { },
+                            readOnly = true,
+                            label = { Text("Category") },
+                            modifier = Modifier.fillMaxWidth(),
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Default.ArrowDropDown,
+                                    "Dropdown",
+                                    Modifier.clickable { expanded = !expanded }
+                                )
+                            }
+                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            categories.forEach { cat ->
+                                DropdownMenuItem(
+                                    text = { Text(cat) },
+                                    onClick = {
+                                        category = cat
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         )

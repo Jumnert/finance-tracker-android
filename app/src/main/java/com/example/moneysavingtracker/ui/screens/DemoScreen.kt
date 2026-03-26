@@ -3,6 +3,7 @@ package com.example.moneysavingtracker.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,9 +44,12 @@ data class Transaction(
     val isIncome: Boolean
 )
 @Composable
-fun DemoScreen() {
+fun DemoScreen(
+    onLogout: () -> Unit = {}
+) {
     val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
     val currentDate = formatter.format(Date())
+    var expanded by remember { mutableStateOf(false) }
 
     val transactions = List(5) {
         Transaction(
@@ -56,17 +60,7 @@ fun DemoScreen() {
         )
     }
     Scaffold(
-        floatingActionButton = {
-            Row {
-                FloatingActionButton(
-                    onClick = { onAddIncome() },
-                    containerColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Income")
-                }
 
-            }
-        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -97,16 +91,29 @@ fun DemoScreen() {
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .clickable { expanded = true },
                     contentAlignment = Alignment.Center
                 ){
                     Image(
-
                         painter = painterResource(id = R.drawable.pfp),
                         contentDescription = "Profile",
                         modifier = Modifier.fillMaxSize().border(4.dp, Color.White, CircleShape),
                         contentScale = ContentScale.Crop
                     )
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Logout") },
+                            onClick = {
+                                expanded = false
+                                onLogout()
+                            }
+                        )
+                    }
                 }
             }
 
@@ -176,7 +183,11 @@ fun DemoScreen() {
                    ,
                 horizontalArrangement = Arrangement.spacedBy(16 .dp) // spacing between buttons
             ) {
-                TransactionButtons()
+                TransactionButtons(
+                    onAddTransaction = { title, amount, category, isIncome ->
+                        // Add logic here to update transactions
+                    }
+                )
             }
 
 

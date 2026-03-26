@@ -1,28 +1,41 @@
 package com.example.moneysavingtracker.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.moneysavingtracker.ui.theme.MoneySavingTrackerTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.moneysavingtracker.ui.screens.components.GoogleAuthButton
+import com.example.moneysavingtracker.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit = {},
+    onLoginSuccess: () -> Unit = {},
     onRegisterClick: () -> Unit = {},
-    onForgotPasswordClick: () -> Unit = {}
+    onForgotPasswordClick: () -> Unit = {},
+    onGoogleLoginClick: () -> Unit = {},
+    authViewModel: AuthViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val error by authViewModel.error.collectAsState()
+
+    LaunchedEffect(error) {
+        error?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+            authViewModel.clearError()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -35,7 +48,6 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Logo/Title
             Text(
                 text = "Finance Tracker",
                 style = MaterialTheme.typography.headlineLarge,
@@ -43,17 +55,8 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Manage your money wisely",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Email
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -66,7 +69,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Password
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -78,9 +80,6 @@ fun LoginScreen(
                 shape = MaterialTheme.shapes.medium
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Forgot Password
             TextButton(
                 onClick = onForgotPasswordClick,
                 modifier = Modifier.align(Alignment.End)
@@ -90,54 +89,35 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Login Button
             Button(
-                onClick = onLoginClick,
+                onClick = { authViewModel.login(email, password, onLoginSuccess) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text(
-                    text = "Login",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Text("Login")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            GoogleAuthButton(
+                text = "Continue with Google",
+                onClick = onGoogleLoginClick,
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Don't have an account? ",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Text("Don't have an account? ")
                 TextButton(onClick = onRegisterClick) {
-                    Text(
-                        text = "Sign up",
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Text("Sign up", fontWeight = FontWeight.SemiBold)
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreenPreview() {
-    MoneySavingTrackerTheme {
-        LoginScreen()
-    }
-}
-
-@Preview(showSystemUi = true, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun LoginScreenDarkPreview() {
-    MoneySavingTrackerTheme(darkTheme = true) {
-        LoginScreen()
     }
 }
