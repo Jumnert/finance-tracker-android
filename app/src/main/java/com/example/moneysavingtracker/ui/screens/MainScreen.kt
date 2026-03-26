@@ -1,35 +1,36 @@
 package com.example.moneysavingtracker.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
-import com.example.moneysavingtracker.R
 import com.example.moneysavingtracker.data.model.Transaction
 import com.example.moneysavingtracker.ui.screens.components.TransactionButtons
 import com.example.moneysavingtracker.ui.screens.components.AddTransactionDialog
+import com.example.moneysavingtracker.ui.screens.components.BalanceSummaryCard
+import com.example.moneysavingtracker.ui.screens.components.DashboardHeader
+import com.example.moneysavingtracker.ui.screens.components.SectionHeader
 import com.example.moneysavingtracker.ui.theme.CardGradient1
 import com.example.moneysavingtracker.viewmodel.AuthViewModel
 import com.example.moneysavingtracker.viewmodel.MainViewModel
@@ -54,7 +55,6 @@ fun MainScreen(
         ?: "Friend"
     val photoUrl = user?.photoUrl
 
-    var profileExpanded by remember { mutableStateOf(false) }
     var transactionToEdit by remember { mutableStateOf<Transaction?>(null) }
 
     Scaffold { padding ->
@@ -65,135 +65,26 @@ fun MainScreen(
                 .padding(padding)
                 .padding(horizontal = 16.dp),
         ) {
-            // Header
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "Welcome back",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = displayName,
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Box (
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .clickable { profileExpanded = true },
-                    contentAlignment = Alignment.Center
-                ){
-                    if (photoUrl != null) {
-                        AsyncImage(
-                            model = photoUrl,
-                            contentDescription = "Profile",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .border(4.dp, Color.White, CircleShape),
-                            contentScale = ContentScale.Crop,
-                            error = painterResource(id = R.drawable.pfp),
-                            fallback = painterResource(id = R.drawable.pfp),
-                            placeholder = painterResource(id = R.drawable.pfp)
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.pfp),
-                            contentDescription = "Profile",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .border(4.dp, Color.White, CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+            DashboardHeader(
+                displayName = displayName,
+                photoUrl = photoUrl,
+                onLogout = onLogout
+            )
 
-                    DropdownMenu(
-                        expanded = profileExpanded,
-                        onDismissRequest = { profileExpanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Logout") },
-                            onClick = {
-                                profileExpanded = false
-                                onLogout()
-                            },
-                            leadingIcon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null) }
-                        )
-                    }
+            BalanceSummaryCard(
+                balanceText = viewModel.formatBalance(totalBalance, isRiel, isVisible),
+                footerText = if (isRiel) "Currency: Khmer Riel" else "Currency: US Dollar",
+                brush = CardGradient1,
+                onRefreshClick = { viewModel.toggleCurrency() },
+                onVisibilityClick = { viewModel.toggleBalanceVisibility() },
+                visibilityIcon = {
+                    Icon(
+                        imageVector = if (isVisible) Icons.Default.Lock else Icons.Default.Notifications,
+                        contentDescription = "Toggle Visibility",
+                        tint = Color.White
+                    )
                 }
-            }
-
-            // Balance Card
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(170.dp)
-                        .background(
-                            brush = CardGradient1,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(24.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Total Balance",
-                                color = Color.White.copy(alpha = 0.7f),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Row {
-                                IconButton(onClick = { viewModel.toggleCurrency() }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Refresh,
-                                        contentDescription = "Switch Currency",
-                                        tint = Color.White
-                                    )
-                                }
-                                IconButton(onClick = { viewModel.toggleBalanceVisibility() }) {
-                                    Icon(
-                                        imageVector = if (isVisible) Icons.Default.Lock else Icons.Default.Notifications, // Using Notifications as a placeholder for 'Eye' if not available, usually visibility/visibility_off
-                                        contentDescription = "Toggle Visibility",
-                                        tint = Color.White
-                                    )
-                                }
-                            }
-                        }
-                        
-                        Text(
-                            text = viewModel.formatBalance(totalBalance, isRiel, isVisible),
-                            color = Color.White,
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        
-                        Text(
-                            text = if (isRiel) "Currency: Khmer Riel" else "Currency: US Dollar",
-                            color = Color.White.copy(alpha = 0.9f),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
+            )
 
             // Add/Remove Buttons
             TransactionButtons(
@@ -202,23 +93,7 @@ fun MainScreen(
                 }
             )
 
-            // Activity Header
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 24.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Activity",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "View All",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+            SectionHeader(title = "Activity", actionText = "View All")
 
             // Transactions List
             LazyColumn(

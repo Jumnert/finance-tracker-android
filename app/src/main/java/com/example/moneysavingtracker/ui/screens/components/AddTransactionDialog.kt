@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.moneysavingtracker.businesslogic.validation.TransactionValidators
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +27,7 @@ fun AddTransactionDialog(
         var amountText by remember { mutableStateOf(initialAmount) }
         var category by remember { mutableStateOf(initialCategory) }
         var expanded by remember { mutableStateOf(false) }
+        var validationMessage by remember { mutableStateOf<String?>(null) }
         
         val categories = if (isIncome) listOf("Salary", "Investment", "Gift", "Other") 
                          else listOf("Food", "Transport", "Entertainment", "Shopping", "Other")
@@ -34,9 +36,19 @@ fun AddTransactionDialog(
             onDismissRequest = { onDismiss() },
             confirmButton = {
                 Button(onClick = {
-                    val amount = amountText.toDoubleOrNull() ?: 0.0
-                    onConfirm(title, amount, category)
-                    onDismiss()
+                    val validation = TransactionValidators.validateTransaction(
+                        title = title,
+                        amountText = amountText,
+                        category = category
+                    )
+
+                    if (validation.isValid) {
+                        val amount = amountText.toDouble()
+                        onConfirm(title.trim(), amount, category)
+                        onDismiss()
+                    } else {
+                        validationMessage = validation.message
+                    }
                 }) {
                     Text("Confirm")
                 }
@@ -51,14 +63,20 @@ fun AddTransactionDialog(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(
                         value = title,
-                        onValueChange = { title = it },
+                        onValueChange = {
+                            title = it
+                            validationMessage = null
+                        },
                         label = { Text("Title") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     
                     OutlinedTextField(
                         value = amountText,
-                        onValueChange = { amountText = it },
+                        onValueChange = {
+                            amountText = it
+                            validationMessage = null
+                        },
                         label = { Text("Amount") },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -87,11 +105,20 @@ fun AddTransactionDialog(
                                     text = { Text(cat) },
                                     onClick = {
                                         category = cat
+                                        validationMessage = null
                                         expanded = false
                                     }
                                 )
                             }
                         }
+                    }
+
+                    validationMessage?.let { message ->
+                        Text(
+                            text = message,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
             }
