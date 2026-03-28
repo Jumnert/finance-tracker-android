@@ -1,6 +1,7 @@
 package com.example.moneysavingtracker.ui.screens.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,7 @@ fun AuthScreenLayout(
     subtitle: String? = null,
     content: @Composable () -> Unit
 ) {
-    androidx.compose.foundation.layout.Box(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)

@@ -181,7 +181,7 @@ fun BalanceSummaryCard(
                         if (onRefreshClick != null) {
                             IconButton(onClick = onRefreshClick) {
                                 Icon(
-                                    imageVector = Icons.Default.Refresh,
+                                    painter = painterResource(R.drawable.ic_dollar),
                                     contentDescription = "Switch Currency",
                                     tint = Color.White
                                 )
