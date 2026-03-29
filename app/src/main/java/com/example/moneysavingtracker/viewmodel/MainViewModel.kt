@@ -2,7 +2,7 @@ package com.example.moneysavingtracker.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moneysavingtracker.data.model.Transaction
+import com.example.moneysavingtracker.model.Transaction
 import com.example.moneysavingtracker.data.repository.TransactionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

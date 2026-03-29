@@ -21,11 +21,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.moneysavingtracker.data.model.Transaction
+import com.example.moneysavingtracker.model.Transaction
 import com.example.moneysavingtracker.ui.screens.components.TransactionButtons
 import com.example.moneysavingtracker.ui.screens.components.AddTransactionDialog
 import com.example.moneysavingtracker.ui.screens.components.BalanceSummaryCard
@@ -112,17 +111,17 @@ fun MainScreen(
         }
     }
 
-    if (transactionToEdit != null) {
+    transactionToEdit?.let { transaction ->
         AddTransactionDialog(
             showDialog = true,
-            isIncome = transactionToEdit!!.isIncome,
-            initialTitle = transactionToEdit!!.title,
-            initialAmount = transactionToEdit!!.amount.toString(),
-            initialCategory = transactionToEdit!!.category,
+            isIncome = transaction.isIncome,
+            initialTitle = transaction.title,
+            initialAmount = transaction.amount.toString(),
+            initialCategory = transaction.category,
             onDismiss = { transactionToEdit = null },
             onConfirm = { title, amount, category ->
                 viewModel.updateTransaction(
-                    transactionToEdit!!.copy(
+                    transaction.copy(
                         title = title,
                         amount = amount,
                         category = category

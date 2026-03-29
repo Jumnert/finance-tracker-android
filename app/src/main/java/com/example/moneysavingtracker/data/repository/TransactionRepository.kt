@@ -1,6 +1,6 @@
 package com.example.moneysavingtracker.data.repository
 
-import com.example.moneysavingtracker.data.model.Transaction
+import com.example.moneysavingtracker.model.Transaction
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
