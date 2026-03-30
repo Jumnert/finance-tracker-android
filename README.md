@@ -168,7 +168,7 @@ Stored transaction fields:
 ### Clone
 
 ```bash
-git clone https://github.com/<your-username>/MoneySavingTracker.git
+git clone https://github.com/jumnert/MoneySavingTracker.git
 cd MoneySavingTracker
 ```
 
