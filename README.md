@@ -306,4 +306,6 @@ Then open a pull request.
 
 ## License
 
-Add your preferred open-source license here if you want to publish the project publicly.
+This project is licensed under the MIT License.
+
+See [LICENSE](/home/jumnert/Documents/MoneySavingTracker/LICENSE) for details.
